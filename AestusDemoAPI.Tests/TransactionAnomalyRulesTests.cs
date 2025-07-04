@@ -7,6 +7,23 @@ namespace AestusDemoAPI.Tests
     [TestClass]
     public sealed class TransactionAnomalyRulesTests
     {
+
+
+
+        [DataTestMethod]
+        [DataRow("Zagreb", false)]
+        [DataRow("Pregrada", true)]
+        [DataRow("zadar", false)]
+        [DataRow("  Zagreb  ", false)]
+        [DataRow("", true)]
+        [DataRow(null, true)]
+        public void IsInvalidLocation_ShouldBehaveAsExpected(string location, bool expectedIsInvalid)
+        {
+            var transaction = new Transaction { Location = location ?? string.Empty, UserId = "u1", Timestamp = DateTime.UtcNow };
+            var result = TransactionAnomalyRules.IsInvalidLocation(transaction);
+            Assert.AreEqual(expectedIsInvalid, result);
+        }
+
         [DataTestMethod]
         [DataRow(200_000, true)]
         [DataRow(100_001, true)]
