@@ -1,5 +1,5 @@
 using AestusDemoAPI.BackgroundServices;
-using AestusDemoAPI.EndpointHandlers;
+using AestusDemoAPI.Extensions;
 using AestusDemoAPI.Infrastructure;
 using AestusDemoAPI.Services;
 using AestusDemoAPI.Settings;
@@ -29,9 +29,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.MapPost("/transactions", TransactionHandler.PostTransactionAsync);
-app.MapGet("/transactions/{id}/anomalies", TransactionHandler.GetAnomaliesAsync);
+app.RegisterEndpoints();
 
 app.Run();
 

@@ -24,5 +24,15 @@ namespace AestusDemoAPI.EndpointHandlers
 
             return Results.Ok(anomalies);
         }
+
+        public static async Task<IResult> GetTransactionsAsync(FinTechAestusContext db)
+        {
+            var anomalies = await db.Transactions
+                .AsNoTracking()
+                .Select(t => t.ToTransactionDto())
+                .ToListAsync();
+
+            return Results.Ok(anomalies);
+        }
     }
 }
