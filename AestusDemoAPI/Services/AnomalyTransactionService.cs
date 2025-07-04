@@ -43,17 +43,17 @@ namespace AestusDemoAPI.Services
                 return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.UnexpectedLocation };
             }
 
-            if (TransactionAnomalyRules.IsUnexpectedAmount(transaction))
+            if (TransactionAnomalyRules.IsUnexpectedAmount(transaction, _settings.MaxAmount))
             {
                 return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.UnexpectedAmount };
             }
 
-            if (TransactionAnomalyRules.IsFrequencySpike(recentTransactions))
+            if (TransactionAnomalyRules.IsFrequencySpike(recentTransactions, _settings.AnomalyCount))
             {
                 return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.FrequencySpike };
             }
 
-            if (TransactionAnomalyRules.IsIQRAnomaly(transaction, recentTransactions))
+            if (TransactionAnomalyRules.IsIQRAnomaly(transaction, recentTransactions, _settings.AnomalyCount))
             {
                 return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.IQRAnomaly };
             }

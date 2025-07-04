@@ -15,8 +15,6 @@ namespace AestusDemoAPI.BackgroundServices
         private readonly IAnomalyDetectionService _anomalyDetectionService;
         private readonly ILogger<TransactionBatchService> _logger;
 
-        private const int BatchSize = 1000;
-        private const int BatchDelayMs = 200;
         private readonly TransactionSettings _settings;
 
         private readonly ConcurrentDictionary<string, List<Transaction>> _userRecentTransactionsCache = new();
@@ -49,7 +47,7 @@ namespace AestusDemoAPI.BackgroundServices
                     }
                 }
 
-                bool batchReady = IsBatchReady(transactionBatch, batchStartTime, _settings.BatchTimeoutSeconds);
+                bool batchReady = IsBatchReady(transactionBatch, batchStartTime, _settings.BatchTimeoutSeconds, _settings.BatchSize);
 
                 if (batchReady)
                 {
@@ -77,7 +75,7 @@ namespace AestusDemoAPI.BackgroundServices
                             trans.IsSuspicious = anomalyStatus.IsSuspicious;
                             trans.Comment = anomalyStatus.Comment;
 
-                            UpdateCache(trans, recentTransactions, _settings.BatchDelayMs);
+                            UpdateCache(trans, recentTransactions, _settings.BatchSize);
                         }
 
                         db.Transactions.AddRange(transactionBatch);
@@ -95,17 +93,17 @@ namespace AestusDemoAPI.BackgroundServices
                 else
                 {
                     // No transactions, wait a bit before next check to avoid tight loop
-                    await Task.Delay(BatchDelayMs, stoppingToken);
+                    await Task.Delay(_settings.BatchDelayMs, stoppingToken);
                 }
             }
         }
 
-        private static bool IsBatchReady(List<Transaction> transactionBatch, DateTime? batchStartTime, int batchTimeoutSeconds)
+        private static bool IsBatchReady(List<Transaction> transactionBatch, DateTime? batchStartTime, int batchTimeoutSeconds, int batchSize)
         {
             bool timeoutReached = batchStartTime.HasValue &&
                                   (DateTime.UtcNow - batchStartTime.Value).TotalSeconds >= batchTimeoutSeconds;
 
-            bool batchReady = transactionBatch.Count >= BatchSize || (transactionBatch.Count > 0 && timeoutReached);
+            bool batchReady = transactionBatch.Count >= batchSize || (transactionBatch.Count > 0 && timeoutReached);
             return batchReady;
         }
 

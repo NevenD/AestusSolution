@@ -10,26 +10,26 @@ namespace AestusDemoAPI.Validation
             return !locations.Any(x => string.Equals(x.Trim(), transaction.Location.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
-        public static bool IsUnexpectedAmount(Transaction transaction)
+        public static bool IsUnexpectedAmount(Transaction transaction, double amount)
         {
             if (transaction.Amount < 0)
             {
                 return false;
             }
 
-            return transaction.Amount > 100_000;
+            return transaction.Amount > amount;
         }
 
-        public static bool IsFrequencySpike(List<Transaction> recentTransactions)
+        public static bool IsFrequencySpike(List<Transaction> recentTransactions, int anomalyCount)
         {
             var fiveMinutesAgo = DateTime.UtcNow.AddMinutes(-5);
             var count = recentTransactions.Count(t => t.Timestamp > fiveMinutesAgo);
-            return count > 10;
+            return count > anomalyCount;
         }
 
-        public static bool IsIQRAnomaly(Transaction tx, List<Transaction> txs)
+        public static bool IsIQRAnomaly(Transaction tx, List<Transaction> txs, int anomalyCount)
         {
-            if (txs.Count < 10)
+            if (txs.Count < anomalyCount)
             {
                 return false;
             }
@@ -43,31 +43,6 @@ namespace AestusDemoAPI.Validation
             var upper = q3 + (1.5 * iqr);
 
             return tx.Amount < lower || tx.Amount > upper;
-        }
-
-        public static bool IsZScoreAnomaly(Transaction transaction, List<Transaction> transactions)
-        {
-            var standardDeviation = 2;
-
-            if (transactions.Count < 10)
-            {
-                return false;
-            }
-
-            var amounts = transactions.Select(t => t.Amount).ToList();
-            var mean = amounts.Average();
-
-            // Sample variance (divide by n-1)
-            var variance = amounts.Sum(a => Math.Pow((double)(a - mean), 2)) / (amounts.Count - 1);
-            var stdDev = Math.Sqrt(variance);
-
-            if (stdDev == 0)
-            {
-                return false;
-            }
-
-            var z = (transaction.Amount - mean) / stdDev;
-            return Math.Abs(z) > standardDeviation;
         }
     }
 }

@@ -17,9 +17,8 @@ namespace AestusDemoAPI.Tests
             var validationSettings = new ValidationSettings
             {
                 Locations = new List<string> { "Zagreb", "Split", "Rijeka" },
-                InvalidAmount = 100000,
+                MaxAmount = 100000,
                 AnomalyCount = 10,
-                StandardDeviation = 2,
                 BatchDelayMs = 200
             };
 
