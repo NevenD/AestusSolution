@@ -29,6 +29,12 @@ namespace AestusDemoAPI.Services
 
         public AnomalyStatusDto CheckCached(Transaction transaction, List<Transaction> recentTransactions)
         {
+
+            if (TransactionAnomalyRules.IsInvalidLocation(transaction))
+            {
+                return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.UnexpectedLocation };
+            }
+
             if (TransactionAnomalyRules.IsInvalidAmount(transaction))
             {
                 return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.UnexpectedAmount };
