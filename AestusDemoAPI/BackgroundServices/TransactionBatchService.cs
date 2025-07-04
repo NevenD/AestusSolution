@@ -1,7 +1,9 @@
 ﻿using AestusDemoAPI.Domain.Entitites;
 using AestusDemoAPI.Infrastructure;
 using AestusDemoAPI.Services;
+using AestusDemoAPI.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 
 namespace AestusDemoAPI.BackgroundServices
@@ -15,15 +17,18 @@ namespace AestusDemoAPI.BackgroundServices
 
         private const int BatchSize = 1000;
         private const int BatchDelayMs = 200;
+        private readonly TransactionSettings _settings;
 
         private readonly ConcurrentDictionary<string, List<Transaction>> _userRecentTransactionsCache = new();
 
-        public TransactionBatchService(ITransactionQueueService queue,
+        public TransactionBatchService(IOptions<TransactionSettings> options,
+                                       ITransactionQueueService queue,
                                        IServiceScopeFactory scopeFactory,
                                        IAnomalyDetectionService anomalyDetectionService,
                                        ILogger<TransactionBatchService> logger)
         {
             _queue = queue;
+            _settings = options.Value;
             _scopeFactory = scopeFactory;
             _anomalyDetectionService = anomalyDetectionService;
             _logger = logger;
@@ -31,7 +36,7 @@ namespace AestusDemoAPI.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var transactionBatch = new List<Transaction>(BatchSize);
+            var transactionBatch = new List<Transaction>(_settings.BatchSize);
             DateTime? batchStartTime = null;
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -44,7 +49,7 @@ namespace AestusDemoAPI.BackgroundServices
                     }
                 }
 
-                bool batchReady = IsBatchReady(transactionBatch, batchStartTime);
+                bool batchReady = IsBatchReady(transactionBatch, batchStartTime, _settings.BatchTimeoutSeconds);
 
                 if (batchReady)
                 {
@@ -72,10 +77,9 @@ namespace AestusDemoAPI.BackgroundServices
                             trans.IsSuspicious = anomalyStatus.IsSuspicious;
                             trans.Comment = anomalyStatus.Comment;
 
-                            UpdateCache(trans, recentTransactions);
+                            UpdateCache(trans, recentTransactions, _settings.BatchDelayMs);
                         }
 
-                        // Save all transactions in batch
                         db.Transactions.AddRange(transactionBatch);
                         await db.SaveChangesAsync(stoppingToken);
 
@@ -96,19 +100,19 @@ namespace AestusDemoAPI.BackgroundServices
             }
         }
 
-        private static bool IsBatchReady(List<Transaction> transactionBatch, DateTime? batchStartTime)
+        private static bool IsBatchReady(List<Transaction> transactionBatch, DateTime? batchStartTime, int batchTimeoutSeconds)
         {
             bool timeoutReached = batchStartTime.HasValue &&
-                                  (DateTime.UtcNow - batchStartTime.Value).TotalSeconds >= 10;
+                                  (DateTime.UtcNow - batchStartTime.Value).TotalSeconds >= batchTimeoutSeconds;
 
             bool batchReady = transactionBatch.Count >= BatchSize || (transactionBatch.Count > 0 && timeoutReached);
             return batchReady;
         }
 
-        private static void UpdateCache(Transaction transaction, List<Transaction> recentTransactions)
+        private static void UpdateCache(Transaction transaction, List<Transaction> recentTransactions, int batchSize)
         {
             recentTransactions.Insert(0, transaction);
-            if (recentTransactions.Count > 1000)
+            if (recentTransactions.Count > batchSize)
             {
                 recentTransactions.RemoveAt(recentTransactions.Count - 1);
             }

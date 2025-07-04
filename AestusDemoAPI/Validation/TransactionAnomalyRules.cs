@@ -4,21 +4,13 @@ namespace AestusDemoAPI.Validation
 {
     public static class TransactionAnomalyRules
     {
-        public static readonly List<string> Locations =
-        [
-            "Zagreb",
-            "Split",
-            "Rijeka",
-            "Osijek",
-            "Zadar"
-        ];
 
-        public static bool IsInvalidLocation(Transaction transaction)
+        public static bool IsInvalidLocation(Transaction transaction, List<string> locations)
         {
-            return !Locations.Any(x => string.Equals(x.Trim(), transaction.Location.Trim(), StringComparison.OrdinalIgnoreCase));
+            return !locations.Any(x => string.Equals(x.Trim(), transaction.Location.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
-        public static bool IsInvalidAmount(Transaction transaction)
+        public static bool IsUnexpectedAmount(Transaction transaction)
         {
             if (transaction.Amount < 0)
             {
