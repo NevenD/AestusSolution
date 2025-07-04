@@ -9,14 +9,14 @@ namespace AestusDemoAPI.Tests
     [TestClass]
     public class AnomalyTransactionServiceTests
     {
-        private AnomalyTransactionService _service;
+        private AnomalyTransactionService? _service;
 
         [TestInitialize]
         public void Setup()
         {
             var validationSettings = new ValidationSettings
             {
-                Locations = new List<string> { "Zagreb", "Split", "Rijeka" },
+                Locations = ["Zagreb", "Split", "Rijeka"],
                 MaxAmount = 100000,
                 AnomalyCount = 10,
                 BatchDelayMs = 200
@@ -37,7 +37,7 @@ namespace AestusDemoAPI.Tests
             var transaction = new Transaction { Location = location ?? string.Empty, UserId = "u1", Timestamp = DateTime.UtcNow };
             var recentTransactions = new List<Transaction>();
 
-            var result = _service.CheckCached(transaction, recentTransactions);
+            var result = _service!.CheckCached(transaction, recentTransactions);
 
             Assert.IsTrue(result.IsSuspicious);
             Assert.AreEqual(message, result.Comment);
@@ -51,7 +51,7 @@ namespace AestusDemoAPI.Tests
             var transaction = new Transaction { Location = "Zagreb" ?? string.Empty, UserId = "u1", Timestamp = DateTime.UtcNow, Amount = amount };
             var recentTransactions = new List<Transaction>();
 
-            var result = _service.CheckCached(transaction, recentTransactions);
+            var result = _service!.CheckCached(transaction, recentTransactions);
 
             Assert.IsTrue(result.IsSuspicious);
             Assert.AreEqual(TransactionAnomalyMessages.UnexpectedAmount, result.Comment);
@@ -78,7 +78,7 @@ namespace AestusDemoAPI.Tests
                 })
                 .ToList();
 
-            var result = _service.CheckCached(transaction, recentTransactions);
+            var result = _service!.CheckCached(transaction, recentTransactions);
 
             Assert.IsTrue(result.IsSuspicious);
             Assert.AreEqual(TransactionAnomalyMessages.FrequencySpike, result.Comment);
@@ -104,7 +104,7 @@ namespace AestusDemoAPI.Tests
                 Timestamp = DateTime.UtcNow
             };
 
-            var result = _service.CheckCached(anomalyTransaction, normalAmounts);
+            var result = _service!.CheckCached(anomalyTransaction, normalAmounts);
 
             Assert.IsTrue(result.IsSuspicious);
             Assert.AreEqual(TransactionAnomalyMessages.IQRAnomaly, result.Comment);
@@ -137,9 +137,9 @@ namespace AestusDemoAPI.Tests
 
             };
 
-            var result = _service.CheckCached(anomalyTransaction, transactions);
+            var result = _service!.CheckCached(anomalyTransaction, transactions);
 
-            //Assert.IsTrue(result.IsSuspicious);
+            Assert.IsFalse(result.IsSuspicious);
             Assert.AreEqual(TransactionAnomalyMessages.ExpectedAmount, result.Comment);
         }
 
