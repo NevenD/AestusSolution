@@ -1,16 +1,13 @@
 ﻿using AestusDemoAPI.Domain.Dtos;
 using AestusDemoAPI.Domain.Entitites;
-using AestusDemoAPI.Infrastructure;
 using AestusDemoAPI.Settings;
 using AestusDemoAPI.Validation;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace AestusDemoAPI.Services
 {
     public interface IAnomalyDetectionService
     {
-        Task<AnomalyStatusDto> CheckAsync(Transaction transaction, FinTechAestusContext db);
 
         AnomalyStatusDto CheckCached(Transaction transaction, List<Transaction> recentTransactions);
     }
@@ -22,17 +19,6 @@ namespace AestusDemoAPI.Services
         public AnomalyTransactionService(IOptions<ValidationSettings> options)
         {
             _settings = options.Value;
-        }
-
-        public async Task<AnomalyStatusDto> CheckAsync(Transaction transaction, FinTechAestusContext db)
-        {
-            var recentTransactions = await db.Transactions
-               .AsNoTracking()
-               .Where(t => t.UserId == transaction.UserId && t.Timestamp < transaction.Timestamp)
-               .Take(1000)
-               .ToListAsync();
-
-            return CheckCached(transaction, recentTransactions);
         }
 
         public AnomalyStatusDto CheckCached(Transaction transaction, List<Transaction> recentTransactions)

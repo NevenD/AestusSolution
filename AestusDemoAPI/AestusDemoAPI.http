@@ -10,7 +10,7 @@ Accept-Language: en-US,en;q=0.5
 
 {
   "user_id": "abc123",
-  "amount": 1174.23,
+  "amount": 111274.23,
   "timestamp": "2024-04-24T12:43:00Z",
   "location": "Zagreb",
   "isSuspicious": false,

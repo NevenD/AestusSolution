@@ -69,9 +69,7 @@ namespace AestusDemoAPI.BackgroundServices
                                 _userRecentTransactionsCache[trans.UserId] = recentTransactions;
                             }
 
-                            var safeRecent = recentTransactions.ToList();
-
-                            var anomalyStatus = _anomalyDetectionService.CheckCached(trans, safeRecent);
+                            var anomalyStatus = _anomalyDetectionService.CheckCached(trans, recentTransactions);
                             trans.IsSuspicious = anomalyStatus.IsSuspicious;
                             trans.Comment = anomalyStatus.Comment;
 
@@ -92,7 +90,6 @@ namespace AestusDemoAPI.BackgroundServices
                 }
                 else
                 {
-                    // No transactions, wait a bit before next check to avoid tight loop
                     await Task.Delay(_settings.BatchDelayMs, stoppingToken);
                 }
             }
