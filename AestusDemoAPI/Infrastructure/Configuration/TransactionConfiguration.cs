@@ -14,6 +14,7 @@ namespace AestusDemoAPI.Infrastructure.Configuration
             builder.HasIndex(x => x.UserId).HasDatabaseName("transactions_userId");
             builder.Property(x => x.Amount);
             builder.Property(x => x.Timestamp);
+            builder.HasIndex(x => x.Timestamp).HasDatabaseName("transactions_timestamp");
             builder.Property(x => x.Location);
             builder.Property(x => x.IsSuspicious);
             builder.Property(x => x.Comment);
