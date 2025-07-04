@@ -43,14 +43,13 @@ namespace AestusDemoAPI.BackgroundServices
             using var scope = _scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<FinTechAestusContext>();
 
-            var yesterday = DateTime.UtcNow.Date.AddDays(-1);
-            var today = yesterday.AddDays(1);
-
+            var from = DateTime.UtcNow.AddDays(-1);
+            var to = DateTime.UtcNow;
             int suspiciousCount = await db.Transactions
                 .AsNoTracking()
-                .CountAsync(t => t.IsSuspicious && t.Timestamp >= yesterday && t.Timestamp < today, cancellationToken);
+                .CountAsync(t => t.IsSuspicious && t.Timestamp >= from.Date && t.Timestamp <= to.Date, cancellationToken);
 
-            _logger.LogInformation("Suspicious transactions on {Date}: {Count}", yesterday.ToShortDateString(), suspiciousCount);
+            _logger.LogInformation("Suspicious transactions in last 24 hours : {Count}", suspiciousCount);
         }
     }
 }
