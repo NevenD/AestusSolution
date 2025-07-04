@@ -1,4 +1,5 @@
-﻿using AestusDemoAPI.Domain.Entitites;
+﻿using AestusDemoAPI.Domain.Dtos;
+using AestusDemoAPI.Domain.Entitites;
 using AestusDemoAPI.Infrastructure;
 using AestusDemoAPI.Validation;
 using Microsoft.EntityFrameworkCore;
@@ -7,40 +8,48 @@ namespace AestusDemoAPI.Services
 {
     public interface IAnomalyDetectionService
     {
-        Task<bool> CheckAsync(Transaction transaction, FinTechAestusContext db);
+        Task<AnomalyStatusDto> CheckAsync(Transaction transaction, FinTechAestusContext db);
+
+        AnomalyStatusDto CheckCached(Transaction transaction, List<Transaction> recentTransactions);
     }
 
     public class AnomalyTransactionService : IAnomalyDetectionService
     {
-        public async Task<bool> CheckAsync(Transaction transaction, FinTechAestusContext db)
+
+        public async Task<AnomalyStatusDto> CheckAsync(Transaction transaction, FinTechAestusContext db)
         {
             var recentTransactions = await db.Transactions
+               .AsNoTracking()
                .Where(t => t.UserId == transaction.UserId && t.Timestamp < transaction.Timestamp)
-               .OrderByDescending(t => t.Timestamp)
                .Take(1000)
                .ToListAsync();
 
+            return CheckCached(transaction, recentTransactions);
+        }
+
+        public AnomalyStatusDto CheckCached(Transaction transaction, List<Transaction> recentTransactions)
+        {
             if (TransactionAnomalyRules.IsInvalidAmount(transaction))
             {
-                return true;
+                return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.UnexpectedAmount };
             }
 
             if (TransactionAnomalyRules.IsFrequencySpike(recentTransactions))
             {
-                return true;
+                return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.FrequencySpike };
             }
 
             if (TransactionAnomalyRules.IsIQRAnomaly(transaction, recentTransactions))
             {
-                return true;
+                return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.IQRAnomaly };
             }
 
             if (TransactionAnomalyRules.IsZScoreAnomaly(transaction, recentTransactions))
             {
-                return true;
+                return new AnomalyStatusDto { IsSuspicious = true, Comment = TransactionAnomalyMessages.ZScoreAnomaly };
             }
 
-            return false;
+            return new AnomalyStatusDto { IsSuspicious = false, Comment = TransactionAnomalyMessages.ExpectedAmount };
         }
     }
 }
