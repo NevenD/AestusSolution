@@ -3,6 +3,7 @@ using AestusDemoAPI.Domain;
 using AestusDemoAPI.Domain.Entitites;
 using AestusDemoAPI.Infrastructure;
 using AestusDemoAPI.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,8 +13,10 @@ builder.Services.AddDbContext<FinTechAestusContext>(o =>
 
 
 builder.Services.AddOpenApi();
-
+builder.Services.AddScoped<IAnomalyDetectionService, AnomalyTransactionService>();
 builder.Services.AddHostedService<DailySuspiciousTransactionService>();
+builder.Services.AddHostedService<TransactionBatchService>();
+
 builder.Services.AddSingleton<ITransactionQueueService, TransactionQueueService>();
 
 var app = builder.Build();
@@ -26,7 +29,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/transactions", async (Transaction transaction, ITransactionQueueService transactionQueueService) =>
+app.MapPost("/transactions", async ([FromBody] Transaction transaction, ITransactionQueueService transactionQueueService) =>
 {
     await transactionQueueService.EnqueueAsync(transaction);
     return Results.Accepted();
