@@ -1,6 +1,5 @@
 using AestusDemoAPI.BackgroundServices;
-using AestusDemoAPI.Domain;
-using AestusDemoAPI.Domain.Entitites;
+using AestusDemoAPI.EndpointHandlers;
 using AestusDemoAPI.Infrastructure;
 using AestusDemoAPI.Services;
 using AestusDemoAPI.Settings;
@@ -31,23 +30,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/transactions", async (Transaction transaction, ITransactionQueueService transactionQueueService) =>
-{
-    await transactionQueueService.EnqueueAsync(transaction);
-    return Results.Accepted();
-});
-
-
-app.MapGet("/transactions/{id}/anomalies", async (string id, FinTechAestusContext db) =>
-{
-    var anomalies = await db.Transactions
-        .AsNoTracking()
-        .Where(t => t.UserId == id && t.IsSuspicious)
-        .Select(t => t.ToSuspiciousTransactionDto())
-        .ToListAsync();
-
-    return Results.Ok(anomalies);
-});
+app.MapPost("/transactions", TransactionHandler.PostTransactionAsync);
+app.MapGet("/transactions/{id}/anomalies", TransactionHandler.GetAnomaliesAsync);
 
 app.Run();
 
