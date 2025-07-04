@@ -1,0 +1,52 @@
+using AestusDemoAPI.BackgroundServices;
+using AestusDemoAPI.Domain;
+using AestusDemoAPI.Domain.Entitites;
+using AestusDemoAPI.Infrastructure;
+using AestusDemoAPI.Services;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<FinTechAestusContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.AddOpenApi();
+
+builder.Services.AddHostedService<DailySuspiciousTransactionService>();
+builder.Services.AddSingleton<ITransactionQueueService, TransactionQueueService>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseHttpsRedirection();
+
+app.MapPost("/transactions", async (Transaction transaction, ITransactionQueueService transactionQueueService) =>
+{
+    await transactionQueueService.EnqueueAsync(transaction);
+    return Results.Accepted();
+});
+
+
+app.MapGet("/transactions/{id}/anomalies", async (string id, FinTechAestusContext db) =>
+{
+    var anomalies = await db.Transactions
+        .AsNoTracking()
+        .Where(t => t.UserId == id && t.IsSuspicious)
+        .Select(t => t.ToSuspiciousTransactionDto())
+        .ToListAsync();
+
+    return Results.Ok(anomalies);
+});
+
+app.Run();
+
+internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
