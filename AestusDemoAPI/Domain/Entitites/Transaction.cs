@@ -6,7 +6,7 @@ namespace AestusDemoAPI.Domain.Entitites
     {
         public int Id { get; set; }
 
-        [JsonPropertyName("user_id")]
+        [JsonPropertyName("userId")]
         public required string UserId { get; set; }
 
         [JsonPropertyName("amount")]

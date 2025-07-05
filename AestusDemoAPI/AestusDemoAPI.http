@@ -1,4 +1,4 @@
-@AestusDemoAPI_HostAddress = http://localhost:5021
+@AestusDemoAPI_HostAddress = https://localhost:7236
 
 
 GET {{AestusDemoAPI_HostAddress}}/transactions
