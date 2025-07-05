@@ -1,3 +1,7 @@
+export enum Controller {
+  TransactionsController = 'transactions',
+}
+
 export enum HttpResponseStatusEnum {
   UnknownError = 0,
   BadRequest = 400,

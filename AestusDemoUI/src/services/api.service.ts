@@ -18,9 +18,9 @@ export class ApiService {
     }),
   };
 
-  _getData(urlPath: string, params = {}): Observable<any> {
+  _getData<T>(urlPath: string, params = {}): Observable<T> {
     return this._http
-      .get<any>(`${environment.url}/${urlPath}`, {
+      .get<T>(`${environment.url}${urlPath}`, {
         headers: this.httpOptions.headers,
         params,
       })
@@ -28,7 +28,7 @@ export class ApiService {
         catchError((error) =>
           this._errorService.handleHttpResponseError(error)
         ),
-        map((response: any) => {
+        map((response: T) => {
           return response;
         })
       );
