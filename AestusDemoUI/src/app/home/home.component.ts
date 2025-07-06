@@ -11,9 +11,9 @@ import { Router } from '@angular/router';
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-20px)' }),
+        style({ opacity: 0, transform: 'translateY(-60px)' }),
         animate(
-          '600ms ease-out',
+          '700ms ease-out',
           style({ opacity: 1, transform: 'translateY(0)' })
         ),
       ]),
