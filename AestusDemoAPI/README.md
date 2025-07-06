@@ -18,7 +18,7 @@ Demo .NET Minimal API for processing financial transactions with built-in anomal
 
 ## 🚀 Getting Started
 
-Follow these steps to set up the project on your local machine.
+Follow these steps to set up the project on your local machine. 
 
 ---
 
@@ -46,6 +46,7 @@ The project uses Entity Framework Core to connect to a SQL database. You'll need
 ### 3️⃣  Apply the Migration Locally
 
 This will create the database and schema based on app model (Transaction.cs)
+The API project includes predefined seed data for transactions to help with development and testing. This data is configured in the Entity Framework Core DbContext class FinTechAestusContext within the OnModelCreating method.
 
 ```bash
 dotnet ef database update
