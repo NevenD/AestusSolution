@@ -1,9 +1,19 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import {
+  MatPaginatorIntl,
+  MatPaginatorModule,
+} from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { fadeIn } from '../helpers/animations';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { DashboardService } from '../../services/dashboard.service';
@@ -13,6 +23,7 @@ import {
   TransactionDto,
 } from '../../entities/models';
 import { CurrencyPipe } from '@angular/common';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -23,19 +34,28 @@ import { CurrencyPipe } from '@angular/common';
     MatIconModule,
     MatChipsModule,
     CurrencyPipe,
+    MatPaginatorModule,
   ],
   animations: [fadeIn],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
+  providers: [{ provide: MatPaginatorIntl }],
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   componentDestroyed$: Subject<void> = new Subject<void>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  selectedpageNumber: number = 1;
+  selectedPageSize: number = 5;
+  selectedPageIndex: number = 0;
+  resultsLength: number = 0;
+
   isLoading: boolean = true;
   totalTransactions: number = 0;
   totalAmount: number = 0;
   suspiciousTransactionsCount: number = 0;
   dailySuspiciousSummary: DailySuspiciousSummaryDto[] = [];
   transactions: TransactionDto[] = [];
+  dataSource!: MatTableDataSource<TransactionDto>;
 
   constructor(private _dashboardService: DashboardService) {}
 
@@ -49,15 +69,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     },
   };
 
-  displayedColumns: string[] = ['name', 'status', 'lastActive'];
-  tableData = [
-    { name: 'Alice', status: 'Online', lastActive: '2 min ago' },
-    { name: 'Bob', status: 'Offline', lastActive: '1 hour ago' },
-    { name: 'Charlie', status: 'Busy', lastActive: '5 min ago' },
+  displayedColumns: string[] = [
+    'userId',
+    'amountWithCurrency',
+    'formatedDate',
+    'location',
+    'comment',
+    'isSuspicious',
   ];
 
   ngOnInit(): void {
     this.getAdminData();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
   }
 
   private getAdminData(): void {
@@ -71,13 +97,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
         takeUntil(this.componentDestroyed$)
       )
       .subscribe((data: DashboardDto) => {
-        console.log('Dashboard data:', data);
         this.dailySuspiciousSummary = data.dailySuspiciousSummary;
         this.totalTransactions = data.totalTransactions;
         this.totalAmount = data.totalAmount;
-        this.transactions = data.transactions;
         this.suspiciousTransactionsCount = data.suspiciousTransactionsCount;
+        this.transactions = data.transactions;
+        this.dataSource = new MatTableDataSource(this.transactions);
+        this.resultsLength = this.transactions.length;
+        setTimeout(() => {
+          if (this.paginator) {
+            this.dataSource.paginator = this.paginator;
+          }
+        });
       });
+  }
+
+  changePage(pageEvent: PageEvent): void {
+    const page = pageEvent.pageIndex + 1;
+    this.selectedPageIndex = pageEvent.pageIndex;
+    this.selectedpageNumber = page;
+    this.selectedPageSize = pageEvent.pageSize;
   }
 
   ngOnDestroy(): void {
