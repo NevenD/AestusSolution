@@ -6,6 +6,7 @@ Demo .NET Minimal API for processing financial transactions with built-in anomal
 - Minimal REST API with:
   - `POST /transactions` – Receive and queue transactions
   - `GET /users/{id}/anomalies` – Fetch suspicious transactions
+  - `GET /dashboard` – Fetch dashboard data
 - Custom anomaly detection using statistical and heuristic rules
 - Asynchronous, high-throughput transaction handling
 - Batch saving using a background worker service
