@@ -25,9 +25,8 @@ A demo financial transaction processing system built using .NET Minimal API for 
 
 This repository contains two main parts: the backend API and the Angular frontend UI. Detailed installation and setup instructions are maintained separately in their respective folders:
 
-API: See the API folder for detailed backend setup instructions, including database configuration and running the .NET Minimal API.
-
-UI: See the UI folder for detailed Angular frontend setup and development instructions.
+- API: See the API folder for detailed backend setup instructions, including database configuration and running the .NET Minimal API.
+- UI: See the UI folder for detailed Angular frontend setup and development instructions.
 
 This structure helps keep the documentation organized and easy to follow. 
 
