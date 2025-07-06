@@ -1,4 +1,14 @@
 <div class="home-container" [@fadeIn]>
+
+
+  @if (isLoading) {
+  <div class="loading-progress ">
+    <mat-spinner color="primary"></mat-spinner>
+  </div>
+  }
+
+
+  @else {
   <div class="dashboard-wrapper">
 
     <div class="top-section">
@@ -47,4 +57,6 @@
     </mat-card>
 
   </div>
+  }
+
 </div>

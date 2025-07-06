@@ -1,5 +1,6 @@
 export enum Controller {
   TransactionsController = 'transactions',
+  DashboardController = 'dashboard',
 }
 
 export enum HttpResponseStatusEnum {
