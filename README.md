@@ -1,11 +1,9 @@
-﻿# FinTech Aestus API
-Demo .NET Minimal API for processing financial transactions with built-in anomaly detection logic. Designed to handle up to 1000 transactions per second per user, with scalable architecture and batch-based persistence. (Based per Aestus Code assignement)
+# FinTech Aestus API
+A demo financial transaction processing system built using .NET Minimal API for backend services and Angular for the frontend interface. Designed to process high-throughput financial transactions with real-time anomaly detection and user-friendly UI.
 
-## 🔧 Features
-
-- Minimal REST API with:
-  - `POST /transactions` – Receive and queue transactions
-  - `GET /users/{id}/anomalies` – Fetch suspicious transactions
+## 🔧 Technologies Used
+### Backend
+- .NET 9 Minimal API
 - Custom anomaly detection using statistical and heuristic rules
 - Asynchronous, high-throughput transaction handling
 - Batch saving using a background worker service
@@ -13,52 +11,23 @@ Demo .NET Minimal API for processing financial transactions with built-in anomal
 - Transaction persistence using `Infrastructure/Migrations` folder
 - Easily extensible and container-ready
 
----
+
+## Frontend (Angular App)
+- Angular 17+ – Frontend framework
+- RxJS – Reactive data handling
+- Angular Material – UI component library
+- REST Integration – Connects to .NET API endpoints
+- ng2-charts – For visualizing dashboard
+
+
 
 ## 🚀 Getting Started
 
-Follow these steps to set up the project on your local machine.
+This repository contains two main parts: the backend API and the Angular frontend UI. Detailed installation and setup instructions are maintained separately in their respective folders:
 
----
+API: See the API folder for detailed backend setup instructions, including database configuration and running the .NET Minimal API.
 
-### 1️⃣ Clone the Repository
+UI: See the UI folder for detailed Angular frontend setup and development instructions.
 
-Download the code to your local machine:
+This structure helps keep the documentation organized and easy to follow. 
 
-```bash
-git clone https://github.com/yourusername/fintech-aestus-api.git
-cd fintech-aestus-api
-```
-
-### 2️⃣  Set Up the Database Connection String
-
-The project uses Entity Framework Core to connect to a SQL database. You'll need to update the connection string to point to your local SQL Server instance.
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=AestusDb;Trusted_Connection=True;"
-  }
-}
-```
-
-### 3️⃣  Apply the Migration Locally
-
-This will create the database and schema based on app model (Transaction.cs)
-
-```bash
-dotnet ef database update
-```
-or in Package Manager Console
-
-```bash
-Update-Database
-```
-
-### 4️⃣  Run the Application
-
-App will run on
-
-http://localhost:5019
-
-https://localhost:7250
