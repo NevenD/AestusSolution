@@ -13,6 +13,7 @@ builder.Services.Configure<TransactionSettings>(builder.Configuration.GetSection
 builder.Services.Configure<ValidationSettings>(builder.Configuration.GetSection("ValidationSettings"));
 
 builder.Services.AddOpenApi();
+builder.Services.AddCors();
 builder.Services.AddSingleton<ITransactionQueueService, TransactionQueueService>();
 builder.Services.AddSingleton<IAnomalyDetectionService, AnomalyTransactionService>();
 
@@ -28,8 +29,13 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-app.RegisterEndpoints();
+app.UseCors(c =>
+    c.AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod());
 
+app.UseHttpsRedirection();
+
+app.RegisterEndpoints();
 app.Run();
 

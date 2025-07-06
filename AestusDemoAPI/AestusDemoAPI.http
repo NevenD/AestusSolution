@@ -1,6 +1,11 @@
 @AestusDemoAPI_HostAddress = https://localhost:7236
 
 
+GET {{AestusDemoAPI_HostAddress}}/dashboard
+Accept: application/json
+
+###
+
 GET {{AestusDemoAPI_HostAddress}}/transactions
 Accept: application/json
 

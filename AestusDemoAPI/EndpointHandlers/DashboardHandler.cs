@@ -18,10 +18,12 @@ namespace AestusDemoAPI.EndpointHandlers
                 .Where(t => t.IsSuspicious)
                 .ToList();
 
+            var totalAmount = allTransactions.Sum(t => t.Amount);
+
             var summary = new DashboardDataDto
             {
                 TotalTransactions = allTransactions.Count,
-                TotalAmount = allTransactions.Sum(t => t.Amount),
+                TotalAmount = Math.Round(totalAmount, 2, MidpointRounding.AwayFromZero),
                 SuspiciousTransactionsCount = suspiciousTransactions.Count,
                 Transactions = allTransactions,
                 DailySuspiciousSummary = allTransactions
