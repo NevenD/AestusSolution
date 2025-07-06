@@ -24,6 +24,8 @@ import {
 } from '../../entities/models';
 import { CurrencyPipe } from '@angular/common';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration } from 'chart.js';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -35,6 +37,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
     MatChipsModule,
     CurrencyPipe,
     MatPaginatorModule,
+    BaseChartDirective,
   ],
   animations: [fadeIn],
   templateUrl: './dashboard.component.html',
@@ -57,17 +60,31 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   transactions: TransactionDto[] = [];
   dataSource!: MatTableDataSource<TransactionDto>;
 
-  constructor(private _dashboardService: DashboardService) {}
+  public barChartLegend = true;
+  public barChartPlugins = [];
 
-  chartType = 'line';
-  chartLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  chartData = [{ data: [12, 19, 14, 22, 30], label: 'Visits' }];
-  chartOptions = {
+  public barChartData: ChartConfiguration<'bar'>['data'] = {
+    labels: [],
+    datasets: [],
+  };
+
+  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true,
     scales: {
       y: { beginAtZero: true },
     },
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+    },
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
   };
+
+  constructor(private _dashboardService: DashboardService) {}
 
   displayedColumns: string[] = [
     'userId',
@@ -82,8 +99,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.getAdminData();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+  ngAfterViewInit(): void {
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+    }
   }
 
   private getAdminData(): void {
@@ -104,6 +123,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.transactions = data.transactions;
         this.dataSource = new MatTableDataSource(this.transactions);
         this.resultsLength = this.transactions.length;
+        this.generateChartData(this.dailySuspiciousSummary);
         setTimeout(() => {
           if (this.paginator) {
             this.dataSource.paginator = this.paginator;
@@ -122,5 +142,21 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.componentDestroyed$.next();
     this.componentDestroyed$.complete();
+  }
+
+  private generateChartData(dailySummary: DailySuspiciousSummaryDto[]): void {
+    const labels = dailySummary.map((item) => item.userId);
+    const data = dailySummary.map((item) => item.totalAmount);
+
+    this.barChartData = {
+      labels: labels,
+      datasets: [
+        {
+          data: data,
+          label: 'Ukupan iznos po korisniku',
+          backgroundColor: '#3f51b5',
+        },
+      ],
+    };
   }
 }

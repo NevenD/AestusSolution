@@ -35,12 +35,9 @@
 
       <mat-card class="home-card chart-card">
         <h2 class="title">Traffic Chart</h2>
-        <!-- <canvas baseChart
-          [data]="chartData"
-          [labels]="chartLabels"
-          [type]="chartType"
-          [options]="chartOptions">
-        </canvas> -->
+        <canvas baseChart [data]="barChartData" [options]="barChartOptions"
+          [plugins]="barChartPlugins" [legend]="barChartLegend" [type]="'bar'">
+        </canvas>
       </mat-card>
     </div>
 
