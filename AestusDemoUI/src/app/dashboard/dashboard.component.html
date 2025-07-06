@@ -14,9 +14,23 @@
     <div class="top-section">
       <mat-card class="home-card info-card">
         <h2 class="title">Status</h2>
-        <p>System is running smoothly.</p>
-        <p>Last update: 2 mins ago</p>
-        <p>Load average: 0.64</p>
+
+        <div class="chip-group">
+          <mat-chip class="chip green-chip" selected>
+            <mat-icon class="info">payments</mat-icon>
+            <span>Ukupan broj transakcija: {{ totalTransactions }}</span>
+          </mat-chip>
+
+          <mat-chip class="chip" selected>
+            <mat-icon class="info">account_balance_wallet</mat-icon>
+            Ukupna vrijednost: {{ totalAmount | currency:'EUR' }}
+          </mat-chip>
+
+          <mat-chip class="chip red-chip" selected>
+            <mat-icon class="danger">report_problem</mat-icon>
+            Sumnjive transakcije: {{ suspiciousTransactionsCount }}
+          </mat-chip>
+        </div>
       </mat-card>
 
       <mat-card class="home-card chart-card">

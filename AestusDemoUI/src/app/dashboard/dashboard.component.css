@@ -16,6 +16,41 @@
   gap: 20px;
 }
 
+.title {
+  font-size: 24px;
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+
+.chip-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  border: 1.5px solid transparent;
+  padding: 8px 12px;
+}
+
+.chip mat-icon {
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+.info {
+  color: #1565c0;
+}
+
+.danger {
+  color: #c62828;
+}
+
 .top-section {
   display: flex;
   justify-content: space-between;

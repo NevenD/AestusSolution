@@ -28,8 +28,6 @@ export interface SuspiciousTransactionDto {
 
 export interface DailySuspiciousSummaryDto {
   userId: string;
-  timestamp: string;
-  amountWithCurrency: string;
-  location: string;
-  comment: string;
+  count: number;
+  totalAmount: number;
 }

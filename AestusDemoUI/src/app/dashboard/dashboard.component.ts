@@ -1,15 +1,29 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { fadeIn } from '../helpers/animations';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { DashboardService } from '../../services/dashboard.service';
-import { DashboardDto, TransactionDto } from '../../entities/models';
+import {
+  DailySuspiciousSummaryDto,
+  DashboardDto,
+  TransactionDto,
+} from '../../entities/models';
+import { CurrencyPipe } from '@angular/common';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatCardModule, MatTableModule, MatProgressSpinnerModule],
+  imports: [
+    MatCardModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatChipsModule,
+    CurrencyPipe,
+  ],
   animations: [fadeIn],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
@@ -20,6 +34,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   totalTransactions: number = 0;
   totalAmount: number = 0;
   suspiciousTransactionsCount: number = 0;
+  dailySuspiciousSummary: DailySuspiciousSummaryDto[] = [];
   transactions: TransactionDto[] = [];
 
   constructor(private _dashboardService: DashboardService) {}
@@ -56,9 +71,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         takeUntil(this.componentDestroyed$)
       )
       .subscribe((data: DashboardDto) => {
+        console.log('Dashboard data:', data);
+        this.dailySuspiciousSummary = data.dailySuspiciousSummary;
         this.totalTransactions = data.totalTransactions;
         this.totalAmount = data.totalAmount;
         this.transactions = data.transactions;
+        this.suspiciousTransactionsCount = data.suspiciousTransactionsCount;
       });
   }
 
