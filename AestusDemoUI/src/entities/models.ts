@@ -9,6 +9,14 @@ export interface TransactionDto {
   comment: string;
 }
 
+export interface DashboardDto {
+  totalTransactions: number;
+  totalAmount: number;
+  suspiciousTransactionsCount: number;
+  dailySuspiciousSummary: DailySuspiciousSummaryDto[];
+  transactions: TransactionDto[];
+}
+
 export interface SuspiciousTransactionDto {
   userId: string;
   amount: number;
