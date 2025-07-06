@@ -1,0 +1,43 @@
+.home-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eceff1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.dashboard-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.home-card {
+  padding: 40px;
+  border-radius: 12px;
+  background: white;
+  flex: 1;
+}
+
+.title {
+  font-weight: 100;
+  margin-bottom: 20px;
+}
+
+.table-card {
+  width: 100%;
+}
+
+.full-width-table {
+  width: 100%;
+}

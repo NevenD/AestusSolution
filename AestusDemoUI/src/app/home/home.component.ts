@@ -1,24 +1,14 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
+import { fadeIn } from '../helpers/animations';
 
 @Component({
   selector: 'app-home',
   imports: [MatButtonModule, MatCardModule],
   standalone: true,
-  animations: [
-    trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-60px)' }),
-        animate(
-          '700ms ease-out',
-          style({ opacity: 1, transform: 'translateY(0)' })
-        ),
-      ]),
-    ]),
-  ],
+  animations: [fadeIn],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

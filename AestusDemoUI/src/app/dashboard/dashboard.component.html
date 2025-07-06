@@ -1,0 +1,50 @@
+<div class="home-container" [@fadeIn]>
+  <div class="dashboard-wrapper">
+
+    <div class="top-section">
+      <mat-card class="home-card info-card">
+        <h2 class="title">Status</h2>
+        <p>System is running smoothly.</p>
+        <p>Last update: 2 mins ago</p>
+        <p>Load average: 0.64</p>
+      </mat-card>
+
+      <mat-card class="home-card chart-card">
+        <h2 class="title">Traffic Chart</h2>
+        <!-- <canvas baseChart
+          [data]="chartData"
+          [labels]="chartLabels"
+          [type]="chartType"
+          [options]="chartOptions">
+        </canvas> -->
+      </mat-card>
+    </div>
+
+    <!-- Bottom: Table -->
+    <mat-card class="home-card table-card">
+      <h2 class="title">User Activity</h2>
+      <table mat-table [dataSource]="tableData"
+        class="mat-elevation-z2 full-width-table">
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">{{element.name}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let element">{{element.status}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastActive">
+          <th mat-header-cell *matHeaderCellDef>Last Active</th>
+          <td mat-cell *matCellDef="let element">{{element.lastActive}}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card>
+
+  </div>
+</div>
