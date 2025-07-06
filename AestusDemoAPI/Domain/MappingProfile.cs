@@ -14,7 +14,8 @@ namespace AestusDemoAPI.Domain
                 UserId = transaction.UserId,
                 Amount = transaction.Amount,
                 AmountWithCurrency = $"{transaction.Amount.ToString("F2", _croatianCulture)} €",
-                Timestamp = transaction.Timestamp.ToString("g", _croatianCulture),
+                Date = transaction.Timestamp,
+                FormatedDate = transaction.Timestamp.ToString("g", _croatianCulture),
                 Location = transaction.Location,
                 IsSuspicious = transaction.IsSuspicious,
                 Comment = transaction.Comment,
@@ -27,18 +28,6 @@ namespace AestusDemoAPI.Domain
             {
                 UserId = transaction.UserId,
                 Amount = transaction.Amount,
-                AmountWithCurrency = $"{transaction.Amount.ToString("F2", _croatianCulture)} €",
-                Timestamp = transaction.Timestamp.ToString("g", _croatianCulture),
-                Location = transaction.Location,
-                Comment = transaction.Comment,
-            };
-        }
-
-        public static DailySuspiciousSummaryDto ToDailySuspiciousSummaryDto(this Transaction transaction)
-        {
-            return new DailySuspiciousSummaryDto
-            {
-                UserId = transaction.UserId,
                 AmountWithCurrency = $"{transaction.Amount.ToString("F2", _croatianCulture)} €",
                 Timestamp = transaction.Timestamp.ToString("g", _croatianCulture),
                 Location = transaction.Location,

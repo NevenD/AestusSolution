@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AestusDemoAPI.BackgroundServices
 {
-    public class DailySuspiciousTransactionService : BackgroundService
+    public sealed class DailySuspiciousTransactionService : BackgroundService
     {
-
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<DailySuspiciousTransactionService> _logger;
 
@@ -38,6 +37,12 @@ namespace AestusDemoAPI.BackgroundServices
             }
         }
 
+
+        ///<summary>
+        /// Scans the database for suspicious transactions that occurred in the last 24 hours
+        /// and logs the total count found.
+        /// </summary>
+        /// <param name="cancellationToken">A token to observe while waiting for the task to complete.</param>
         private async Task ScanAndLogSuspiciousTransactions(CancellationToken cancellationToken)
         {
             using var scope = _scopeFactory.CreateScope();

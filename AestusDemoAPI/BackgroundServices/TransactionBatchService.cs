@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 
 namespace AestusDemoAPI.BackgroundServices
 {
-    public class TransactionBatchService : BackgroundService
+    public sealed class TransactionBatchService : BackgroundService
     {
         private readonly ITransactionQueueService _queue;
         private readonly IServiceScopeFactory _scopeFactory;
@@ -32,6 +32,14 @@ namespace AestusDemoAPI.BackgroundServices
             _logger = logger;
         }
 
+
+
+        /// <summary>
+        /// Executes the background service loop that batches incoming transactions from the queue.
+        /// When a batch is ready (by size or timeout), it processes each transaction for anomaly detection,
+        /// updates the user transaction cache, and persists the batch to the database.
+        /// Handles errors and logs batch operations.
+        /// </summary>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var transactionBatch = new List<Transaction>(_settings.BatchSize);
@@ -57,7 +65,6 @@ namespace AestusDemoAPI.BackgroundServices
                         var db = scope.ServiceProvider.GetRequiredService<FinTechAestusContext>();
                         foreach (var trans in transactionBatch)
                         {
-                            // Load or get cached recent transactions for user
                             if (!_userRecentTransactionsCache.TryGetValue(trans.UserId, out var recentTransactions))
                             {
                                 recentTransactions = await db.Transactions
@@ -95,6 +102,17 @@ namespace AestusDemoAPI.BackgroundServices
             }
         }
 
+
+        /// <summary>
+        /// Determines whether the current batch of transactions is ready to be processed.
+        /// A batch is considered ready if it has reached the specified size, or if the timeout
+        /// since the first transaction was added has elapsed.
+        /// </summary>
+        /// <param name="transactionBatch">The list of transactions currently in the batch.</param>
+        /// <param name="batchStartTime">The time when the first transaction was added to the batch, or null if the batch is empty.</param>
+        /// <param name="batchTimeoutSeconds">The maximum number of seconds to wait before processing a non-full batch.</param>
+        /// <param name="batchSize">The maximum number of transactions per batch.</param>
+        /// <returns>True if the batch is ready to be processed; otherwise, false.</returns>
         private static bool IsBatchReady(List<Transaction> transactionBatch, DateTime? batchStartTime, int batchTimeoutSeconds, int batchSize)
         {
             bool timeoutReached = batchStartTime.HasValue &&
@@ -104,6 +122,14 @@ namespace AestusDemoAPI.BackgroundServices
             return batchReady;
         }
 
+
+        /// <summary>
+        /// Updates the recent transactions cache for a user by inserting the latest transaction at the beginning of the list.
+        /// Ensures the cache does not exceed the specified batch size by removing the oldest transaction if necessary.
+        /// </summary>
+        /// <param name="transaction">The new transaction to add to the cache.</param>
+        /// <param name="recentTransactions">The list of recent transactions for the user.</param>
+        /// <param name="batchSize">The maximum number of transactions to keep in the cache.</param>
         private static void UpdateCache(Transaction transaction, List<Transaction> recentTransactions, int batchSize)
         {
             recentTransactions.Insert(0, transaction);

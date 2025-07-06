@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AestusDemoAPI.EndpointHandlers
 {
-    public class TransactionHandler
+    public sealed class TransactionHandler
     {
         public static async Task<IResult> PostTransactionAsync(Transaction transaction, ITransactionQueueService transactionQueueService)
         {
