@@ -2,7 +2,7 @@
 A demo financial transaction processing system built using .NET Minimal API for backend services and Angular for the frontend interface. Designed to process high-throughput financial transactions with real-time anomaly detection and user-friendly UI.
 
 ## 🔧 Technologies Used
-### Backend
+### Backend (.NET Core API)
 - .NET 9 Minimal API
 - Custom anomaly detection using statistical and heuristic rules
 - Asynchronous, high-throughput transaction handling
