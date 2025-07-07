@@ -1,5 +1,4 @@
 export enum Controller {
-  TransactionsController = 'transactions',
   DashboardController = 'dashboard',
 }
 

@@ -15,7 +15,7 @@ import { fadeIn } from '../helpers/animations';
 export class HomeComponent {
   constructor(private router: Router) {}
 
-  goToDashboard() {
+  goToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 }

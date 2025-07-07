@@ -153,8 +153,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       datasets: [
         {
           data: data,
-          label: 'Ukupan iznos po korisniku',
-          backgroundColor: '#3f51b5',
+          label: 'Ukupan iznos €',
+          backgroundColor: 'lightblue',
         },
       ],
     };
