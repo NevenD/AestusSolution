@@ -70,17 +70,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true,
-    scales: {
-      y: { beginAtZero: true },
-    },
     plugins: {
       legend: {
         position: 'top',
       },
-    },
-    interaction: {
-      mode: 'index',
-      intersect: false,
     },
   };
 
