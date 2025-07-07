@@ -7,7 +7,7 @@ namespace AestusDemoAPI.EndpointHandlers
 {
     public sealed class DashboardHandler
     {
-        public static async Task<IResult> GetDashboardData(FinTechAestusContext db)
+        public static async Task<IResult> GetDashboardDataAsync(FinTechAestusContext db)
         {
             var allTransactions = await db.Transactions
                 .AsNoTracking()

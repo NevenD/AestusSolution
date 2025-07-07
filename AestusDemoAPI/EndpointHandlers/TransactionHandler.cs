@@ -14,7 +14,7 @@ namespace AestusDemoAPI.EndpointHandlers
             return Results.Accepted();
         }
 
-        public static async Task<IResult> GetAnomaliesAsync(string id, FinTechAestusContext db)
+        public static async Task<IResult> GetAnomaliesByUserIdAsync(string id, FinTechAestusContext db)
         {
             var anomalies = await db.Transactions
                 .AsNoTracking()

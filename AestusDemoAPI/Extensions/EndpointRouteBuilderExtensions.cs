@@ -8,10 +8,10 @@ namespace AestusDemoAPI.Extensions
         {
             endpoints.MapGet("/transactions", TransactionHandler.GetTransactionsAsync);
             endpoints.MapPost("/transactions", TransactionHandler.PostTransactionAsync);
-            endpoints.MapGet("/transactions/{id}/anomalies", TransactionHandler.GetAnomaliesAsync);
+            endpoints.MapGet("/transactions/{id}/anomalies", TransactionHandler.GetAnomaliesByUserIdAsync);
 
 
-            endpoints.MapGet("/dashboard", DashboardHandler.GetDashboardData);
+            endpoints.MapGet("/dashboard", DashboardHandler.GetDashboardDataAsync);
         }
     }
 }
