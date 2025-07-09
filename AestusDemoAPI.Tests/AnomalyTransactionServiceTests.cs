@@ -19,7 +19,6 @@ namespace AestusDemoAPI.Tests
                 Locations = ["Zagreb", "Split", "Rijeka"],
                 MaxAmount = 100000,
                 AnomalyCount = 10,
-                BatchDelayMs = 200
             };
 
             var options = Options.Create(validationSettings);
